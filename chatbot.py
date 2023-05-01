@@ -24,10 +24,10 @@ import speech_recognition as sr
 from gtts import gTTS
 import os
 import datetime
-
+import winsound
 
 from transformers import pipeline, Conversation
-
+current_dir = os.getcwd()
 
 # Build the AI
 # nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium", tokenizer="microsoft/DialoGPT-medium", padding_side="left")
@@ -48,8 +48,10 @@ class ChatBot():
         speaker = gTTS(text=text, lang="en", slow=False)
         speaker.save("res.mp3")
         # macbook->afplay | windows->start
-        os.system("mpg123 res.mp3 >/dev/null 2>&1")
-        os.remove("res.mp3")
+        os.system("start res.mp3")
+        # print(current_dir+"\\res.mp3")
+        # winsound.PlaySound(current_dir+"\\res.wav", winsound.SND_FILENAME)
+        # os.remove("res.mp3")
 
     @staticmethod
     def action_time():
