@@ -7,15 +7,17 @@ def loadConfig():
         config.read('.conf')
         ciudad = config['DEFAULT']['ciudad']
         nombre = config['DEFAULT']['nombre']
+        musica = config['DEFAULT']['musica']
     else:
         ciudad = input("Introduzca su ciudad:\n")
         nombre = input("Introduzca su nombre:\n")
+        musica = input("Introduzca su género músical favorito:\n")
         config = configparser.ConfigParser()
-        config['DEFAULT'] = {'ciudad': ciudad, 'nombre': nombre}
+        config['DEFAULT'] = {'ciudad': ciudad, 'nombre': nombre, 'musica': musica}
         with open('.conf', 'w') as f:
             config.write(f)
     
-    settings_list = {"ciudad":ciudad, "nombre":nombre}    
+    settings_list = {"ciudad":ciudad, "nombre":nombre, "musica":musica}    
     return settings_list
 
 if __name__ == "__main__":

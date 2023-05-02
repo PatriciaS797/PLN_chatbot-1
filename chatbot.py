@@ -28,7 +28,8 @@ import winsound
 
 from transformers import pipeline, Conversation
 current_dir = os.getcwd()
-
+from helpers import *
+from config import *
 # Build the AI
 # nlp = transformers.pipeline("conversational", model="microsoft/DialoGPT-medium", tokenizer="microsoft/DialoGPT-medium", padding_side="left")
 
@@ -72,6 +73,7 @@ class ChatBot():
 
 # Run the AI
 if __name__ == "__main__":
+    settings = loadConfig()
     ai = ChatBot(name="maya")
     # while True:
     input_text = "hello!"
@@ -79,11 +81,15 @@ if __name__ == "__main__":
     output = pipe(input_text, do_sample=True)
     print(output)
     # nlp(transformers.Conversation(input_text),pad_token_id=50256)
+    ins = "Pon musica"
     if ai.wake_up("maya"):
         res = "Hello I am Maya the AI, what can I do for you?"
         ai.text_to_speech(res)
         res = ai.action_time()
         ai.text_to_speech(res)
         ai.text_to_speech(output[0]["generated_text"])
+
+        if ins == "Pon musica":
+            playMusic(settings["musica"])
     # ai.wake_up("maya")
     #      ai.speech_to_text()
