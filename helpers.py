@@ -2,7 +2,7 @@ import webbrowser
 from bs4 import BeautifulSoup
 import requests
 import re
-
+#pip install beautifulsoup4
 def playMusic(query):
 
     url = f"https://www.youtube.com/results?search_query={query}"

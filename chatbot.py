@@ -7,7 +7,7 @@
 # # for language model
 # pip install transformers  #(4.11.3)
 # pip install tensorflow #(2.6.0, or pytorch)
-
+# pip install numpy
 
 # PyAudio necesario para el micro de speech recognition
 # pip install PyAudio
@@ -40,8 +40,8 @@ class ChatBot():
         print("--- starting up", name, "---")
         self.name = name
 
-    def wake_up(self, text):
-        return True if self.name in text.lower() else False
+    # def wake_up(self, text):
+    #     return True if self.name in text.lower() else False
 
     @staticmethod
     def text_to_speech(text):
@@ -57,39 +57,42 @@ class ChatBot():
     @staticmethod
     def action_time():
         return datetime.datetime.now().time().strftime('%H:%M')
-    # funcionaria si me pillara el micro :(
-    # def speech_to_text(self):
-    #     recognizer = sr.Recognizer()
-    #     with sr.Microphone() as mic:
-    #         recognizer.adjust_for_ambient_noise(mic, duration=1)
-    #         print("listening...")
-    #         audio = recognizer.listen(mic)
-    #     try:
-    #         self.text = recognizer.recognize_google(audio)
-    #         print("me --> ", self.text)
-    #     except:
-    #         print("me -->  ERROR")
-
+    @staticmethod
+    def speech_to_text():
+        recognizer = sr.Recognizer()
+        text = ""
+        with sr.Microphone() as mic:
+            recognizer.adjust_for_ambient_noise(mic, duration=1)
+            print("listening...")
+            audio = recognizer.listen(mic)
+        try:
+            text = recognizer.recognize_google(audio)
+            print("me --> ",text)
+        except:
+            print("me -->  ERROR")
+        return text
 
 # Run the AI
 if __name__ == "__main__":
     settings = loadConfig()
     ai = ChatBot(name="maya")
-    # while True:
-    input_text = "hello!"
     pipe = pipeline(model="facebook/opt-1.3b")
-    output = pipe(input_text, do_sample=True)
-    print(output)
-    # nlp(transformers.Conversation(input_text),pad_token_id=50256)
-    ins = "Pon musica"
-    if ai.wake_up("maya"):
-        res = "Hello I am Maya the AI, what can I do for you?"
-        ai.text_to_speech(res)
-        res = ai.action_time()
-        ai.text_to_speech(res)
-        ai.text_to_speech(output[0]["generated_text"])
 
-        if ins == "Pon musica":
+    res = "Hello I am Maya the AI, what can I do for you?"
+    ai.text_to_speech(output[0]["generated_text"])
+
+    # nlp(transformers.Conversation(input_text),pad_token_id=50256)
+
+    while True:
+
+        ins = ai.speech_to_text()
+        if ins == "play music":
             playMusic(settings["musica"])
-    # ai.wake_up("maya")
-    #      ai.speech_to_text()
+        elif ins == "what's the time":
+            res = ai.action_time()
+            ai.text_to_speech(res)
+        elif ins == "tell a joke":
+            output = pipe(ins, do_sample=True)
+            ai.text_to_speech(output[0]['generated_text'])
+        else:
+            pass
