@@ -18,7 +18,7 @@
 # sudo apt-get install mpg123
 import numpy as np
 import transformers
-
+import time
 import speech_recognition as sr
 
 from gtts import gTTS
@@ -51,7 +51,7 @@ class ChatBot():
         # macbook->afplay | windows->start
         os.system("start res.mp3")
         # print(current_dir+"\\res.mp3")
-        # winsound.PlaySound(current_dir+"\\res.wav", winsound.SND_FILENAME)
+        winsound.PlaySound(current_dir+"\\res.wav", winsound.SND_FILENAME)
         # os.remove("res.mp3")
 
     @staticmethod
@@ -77,22 +77,45 @@ if __name__ == "__main__":
     settings = loadConfig()
     ai = ChatBot(name="maya")
     pipe = pipeline(model="facebook/opt-1.3b")
-
+    output = pipe("Hello")
     res = "Hello I am Maya the AI, what can I do for you?"
     ai.text_to_speech(output[0]["generated_text"])
 
-    # nlp(transformers.Conversation(input_text),pad_token_id=50256)
+   # nlp(transformers.Conversation(input_text),pad_token_id=50256)
 
     while True:
 
         ins = ai.speech_to_text()
         if ins == "play music":
             playMusic(settings["musica"])
+
         elif ins == "what's the time":
             res = ai.action_time()
             ai.text_to_speech(res)
+
+        elif ins == "what's the weather":
+            res="Do you want the complete forecast?"
+            ai.text_to_speech(res)
+            ins = ai.speech_to_text()
+            print(ins)
+            if ins == "yes":
+
+                res=getWeather(settings["ciudad"],True)
+            else:
+                res=getWeather(settings["ciudad"],False)
+                ai.text_to_speech(res)
+
         elif ins == "tell a joke":
             output = pipe(ins, do_sample=True)
-            ai.text_to_speech(output[0]['generated_text'])
+            #ai.text_to_speech(output[0]['generated_text'])
+
+        elif ins == "tell me the news":
+            res=getNews()
+            for title in res:
+                ai.text_to_speech(title)
+                time.sleep(6)
+        elif ins == "summarize":
+            res=summarize()
+            ai.text_to_speech(res)
         else:
             pass
