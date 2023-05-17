@@ -105,17 +105,20 @@ if __name__ == "__main__":
                 res=getWeather(settings["ciudad"],False)
                 ai.text_to_speech(res)
 
-        elif ins == "tell a joke":
-            output = pipe(ins, do_sample=True)
-            #ai.text_to_speech(output[0]['generated_text'])
+        elif ins == "joke":
+            res=joke()
+            ai.text_to_speech(res)
+        elif ins == "I'm bored":
+            res=activity()
+            ai.text_to_speech(res)
 
         elif ins == "tell me the news":
             res=getNews()
             for title in res:
                 ai.text_to_speech(title)
                 time.sleep(6)
-        elif ins == "summarize":
-            res=summarize()
+        elif ins == "cocktail":
+            res=cocktail()
             ai.text_to_speech(res)
         else:
             pass

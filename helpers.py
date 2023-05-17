@@ -79,3 +79,41 @@ def summarize():
     )
     data = response.json()
     return data
+
+def cocktail():
+    load_dotenv()
+    # Obtener el valor de la clave de API
+    api_key = os.getenv('NINJA_API')
+    name = 'bloody mary'
+    limit=1
+    api_url = 'https://api.api-ninjas.com/v1/cocktail?name={}&limit={}'.format(name, limit)
+    response = requests.get(api_url, headers={'X-Api-Key':api_key})
+    data = response.json()
+    if response.status_code == requests.codes.ok:
+        return response.text
+    else:
+        print("Error:", response.status_code, response.text)
+
+def joke():
+    load_dotenv()
+    # Obtener el valor de la clave de API
+    api_key = os.getenv('NINJA_API')
+    limit = 1
+    api_url = 'https://api.api-ninjas.com/v1/jokes?limit={}'.format(limit)
+    response = requests.get(api_url, headers={'X-Api-Key': api_key})
+    if response.status_code == requests.codes.ok:
+        return response.text
+    else:
+        print("Error:", response.status_code, response.text)
+
+def activity():
+    load_dotenv()
+    # Obtener el valor de la clave de API
+    api_key = os.getenv('NINJA_API')
+    api_url = 'https://api.api-ninjas.com/v1/bucketlist'
+    response = requests.get(api_url, headers={'X-Api-Key': api_key})
+    if response.status_code == requests.codes.ok:
+        print(response.text)
+        return response.text
+    else:
+        print("Error:", response.status_code, response.text)
