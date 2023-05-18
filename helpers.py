@@ -24,7 +24,7 @@ def playMusic(query):
     webbrowser.open(url + query, new=2)
 
 
-def getWeather(city,complete):
+def getWeather(city):
     load_dotenv()
     # Obtener el valor de la clave de API
     api_key = os.getenv('WEATHER_API1')
@@ -43,10 +43,8 @@ def getWeather(city,complete):
    # humidity = data["humidity"]
    # feelslike_c=data["feelslike_c"]
    
-    if complete==True :
-        res=  f"The current temperature is {current_temp_c} degrees Celsius.It is {current_condition_text} and the wind speed is {wind_kph} km/h."
-    else:
-        res = f"The current temperature is {current_temp_c} degrees Celsius."
+    
+    res=  f"The current temperature is {current_temp_c} degrees Celsius.It is {current_condition_text} and the wind speed is {wind_kph} km/h."
     return res
 
 def getNews():
@@ -57,30 +55,36 @@ def getNews():
     url = f"https://newsapi.org/v2/top-headlines?country=us&sortBy=popularity&pageSize=5&apiKey={api_key}"
     response = requests.get(url)
     data = response.json()
-    print(data["totalResults"])
-    print(data["status"])
     titles = []
     for article in data["articles"]:
         titles.append(article["title"])
     return titles
 
-def summarize():
-    openai.api_key_path="./.env"
+def summarize(path):
+    load_dotenv()
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    with open('./ejemplo.txt', 'r') as file:
+    with open(path, 'r') as file:
         contenido = file.read()
-    contenido+=contenido + "\n\nTl;dr"
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=contenido,
+    contenido=contenido + "\n\nTl;dr"
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        max_tokens=100,
         temperature=0.7,
-        max_tokens=60,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=1
+        top_p=0.5,
+        frequency_penalty=0.5,
+        messages=
+       [
+         {
+          "role": "system",
+          "content": "You are a helpful assistant for text summarization.",
+         },
+         {
+          "role": "user",
+          "content": f"Summarize this : {contenido}",
+         },
+        ],
     )
-    data = response.json()
-    return data
+    return res["choices"][0]["message"]["content"]
 
 def cocktail():
     load_dotenv()
@@ -135,7 +139,7 @@ def parse_sentences(sentence):
     model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": """I need you to tell the user only the most similar sentence of the following ones that are sepated by commas to their original sentence.\
-        This are the sentences:play music, what's the time, what's the weather, joke, i'm bored, tell me the news, cocktail, i want to play chess, open visual studio, classify sentiments, tell me poem.\
+        This are the sentences:play music, what's the time, what's the weather,hungry,summarize, joke, i'm bored, tell me the news, cocktail, i want to play chess, open visual studio, classify sentiments, tell me poem.\
         Now when the user asks you a sentence you only MUST return the exact sentence of the previous one which is more similar to the users one"""},
         {"role": "system", "content": """I repeat answer ONLY and ONLY with EXACTLY the most similar sentence I DONT NEED an introduction telling me that thats the sentence,\
         this is inside a script if u give me more than the sentence it will crash"""},
@@ -166,3 +170,17 @@ def poem():
     api_url = f"https://poetrydb.org/random/1/lines"
     response = requests.get(api_url)
     return response.json()[0]["lines"][:6]
+
+
+def food():
+    load_dotenv()
+    # Obtener el valor de la clave de API
+    api_key = os.getenv('NINJA_API')
+    name = 'soup'
+    limit=1
+    api_url = 'https://api.api-ninjas.com/v1/recipe?query={}&limit={}'.format(name, limit)
+    response = requests.get(api_url, headers={'X-Api-Key':api_key})
+    if response.status_code == requests.codes.ok:
+        return response.text
+    else:
+        print("Error:", response.status_code, response.text)

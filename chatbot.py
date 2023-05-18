@@ -96,38 +96,46 @@ if __name__ == "__main__":
             res = ai.action_time()
             ai.text_to_speech(res)
 
-        elif ins == "what's the weather":
-            res="Do you want the complete forecast?"
+        elif ins == "what's the weather":   
+            res=getWeather(settings["ciudad"])
             ai.text_to_speech(res)
-            # ins = ai.speech_to_text()
-            ins = input("?\n")
-            print(ins)
-            if ins == "yes":
-                res=getWeather(settings["ciudad"],True)
-            else:
-                res=getWeather(settings["ciudad"],False)
-                ai.text_to_speech(res)
+
         elif ins == "joke":
             res=joke()
             ai.text_to_speech(res[0]['joke'])
+
         elif ins == "i'm bored":
             res=activity()
             ai.text_to_speech(res["item"])
-        elif ins == "tell me the news.":
+
+        elif ins == "tell me the news":
             res=getNews()
             for title in res:
                 ai.text_to_speech(title)
                 time.sleep(6)
+
         elif ins == "cocktail":
             res=cocktail()
             ai.text_to_speech(res)
+
+        elif ins == "hungry":
+            res=food()
+            ai.text_to_speech(res)
+
         elif ins == "i want to play chess":
             playChess()
+
         elif ins == "open visual studio":
             code()
+
         elif ins == "classify sentiments":
             res = sentiment_classifier(input("tell me what do you want to classify\n"))
             ai.text_to_speech(res)
+
+        elif ins == "summarize":
+            res = summarize(input("tell me what do you want to summarize\n"))
+            ai.text_to_speech(res)
+
         elif ins == "tell me poem":
             res = ''.join(poem())
             ai.text_to_speech(res)
