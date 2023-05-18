@@ -104,7 +104,8 @@ def joke():
     api_url = 'https://api.api-ninjas.com/v1/jokes?limit={}'.format(limit)
     response = requests.get(api_url, headers={'X-Api-Key': api_key})
     if response.status_code == requests.codes.ok:
-        return response.text
+        print(response)
+        return response.json()
     else:
         print("Error:", response.status_code, response.text)
 
@@ -116,7 +117,7 @@ def activity():
     response = requests.get(api_url, headers={'X-Api-Key': api_key})
     if response.status_code == requests.codes.ok:
         print(response.text)
-        return response.text["item"]
+        return response.json()
     else:
         print("Error:", response.status_code, response.text)
 
@@ -134,7 +135,7 @@ def parse_sentences(sentence):
     model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": """I need you to tell the user only the most similar sentence of the following ones that are sepated by commas to their original sentence.\
-        This are the sentences:play music, what's the time, what's the weather, joke, i'm bored, tell me the news, cocktail, i want to play chess, open visual studio, classify sentiments.\
+        This are the sentences:play music, what's the time, what's the weather, joke, i'm bored, tell me the news, cocktail, i want to play chess, open visual studio, classify sentiments, tell me poem.\
         Now when the user asks you a sentence you only MUST return the exact sentence of the previous one which is more similar to the users one"""},
         {"role": "system", "content": """I repeat answer ONLY and ONLY with EXACTLY the most similar sentence I DONT NEED an introduction telling me that thats the sentence,\
         this is inside a script if u give me more than the sentence it will crash"""},
@@ -160,3 +161,8 @@ def sentiment_classifier(sentence):
     )
     print(completion.choices[0].message["content"])
     return completion.choices[0].message["content"]
+
+def poem():
+    api_url = f"https://poetrydb.org/random/1/lines"
+    response = requests.get(api_url)
+    return response.json()[0]["lines"][:6]

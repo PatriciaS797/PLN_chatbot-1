@@ -109,10 +109,10 @@ if __name__ == "__main__":
                 ai.text_to_speech(res)
         elif ins == "joke":
             res=joke()
-            ai.text_to_speech(res)
+            ai.text_to_speech(res[0]['joke'])
         elif ins == "i'm bored":
             res=activity()
-            ai.text_to_speech(res)
+            ai.text_to_speech(res["item"])
         elif ins == "tell me the news.":
             res=getNews()
             for title in res:
@@ -127,6 +127,9 @@ if __name__ == "__main__":
             code()
         elif ins == "classify sentiments":
             res = sentiment_classifier(input("tell me what do you want to classify\n"))
+            ai.text_to_speech(res)
+        elif ins == "tell me poem":
+            res = ''.join(poem())
             ai.text_to_speech(res)
         else:
             pass
