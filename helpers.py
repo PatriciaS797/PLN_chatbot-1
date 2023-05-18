@@ -104,7 +104,7 @@ def joke():
     api_url = 'https://api.api-ninjas.com/v1/jokes?limit={}'.format(limit)
     response = requests.get(api_url, headers={'X-Api-Key': api_key})
     if response.status_code == requests.codes.ok:
-        return response.text["item"]
+        return response.text
     else:
         print("Error:", response.status_code, response.text)
 
@@ -116,7 +116,7 @@ def activity():
     response = requests.get(api_url, headers={'X-Api-Key': api_key})
     if response.status_code == requests.codes.ok:
         print(response.text)
-        return response.text
+        return response.text["item"]
     else:
         print("Error:", response.status_code, response.text)
 
