@@ -2,12 +2,16 @@ import webbrowser
 from bs4 import BeautifulSoup
 import requests
 import os
-import openai
+# import openai
 import re
 from dotenv import load_dotenv
 #pip install beautifulsoup4
 #pip install python-dotenv
 #pip install openai
+import subprocess
+import os
+from dotenv import load_dotenv
+import openai
 
 def playMusic(query):
 
@@ -19,8 +23,6 @@ def playMusic(query):
     url = f"https://www.youtube.com/{matches[0]}"+ "&autoplay=1"
     webbrowser.open(url + query, new=2)
 
-if __name__ == "__main__":
-    playMusic("khordell")
 
 def getWeather(city,complete):
     load_dotenv()
@@ -102,7 +104,7 @@ def joke():
     api_url = 'https://api.api-ninjas.com/v1/jokes?limit={}'.format(limit)
     response = requests.get(api_url, headers={'X-Api-Key': api_key})
     if response.status_code == requests.codes.ok:
-        return response.text
+        return response.text["item"]
     else:
         print("Error:", response.status_code, response.text)
 
@@ -117,3 +119,44 @@ def activity():
         return response.text
     else:
         print("Error:", response.status_code, response.text)
+
+def playChess():
+    url = "https://reign.gracehopper.xyz/"
+    webbrowser.open(url, new=2)
+
+def code():
+    subprocess.Popen(['cmd', '/c', 'code'])
+
+def parse_sentences(sentence):
+    load_dotenv()
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": """I need you to tell the user only the most similar sentence of the following ones that are sepated by commas to their original sentence.\
+        This are the sentences:play music, what's the time, what's the weather, joke, i'm bored, tell me the news, cocktail, i want to play chess, open visual studio, classify sentiments.\
+        Now when the user asks you a sentence you only MUST return the exact sentence of the previous one which is more similar to the users one"""},
+        {"role": "system", "content": """I repeat answer ONLY and ONLY with EXACTLY the most similar sentence I DONT NEED an introduction telling me that thats the sentence,\
+        this is inside a script if u give me more than the sentence it will crash"""},
+        {"role": "user", "content": sentence}
+    ],
+    temperature=0
+    )
+    print(completion.choices[0].message["content"])
+    return completion.choices[0].message["content"]
+
+def sentiment_classifier(sentence):
+    load_dotenv()
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": """the user is gonna tell you short sentences i need you to classify them in positive, neutral, or negative and to tell me the 5 principal feelings they gave to you"""},
+        # {"role": "system", "content": """I repeat answer ONLY and ONLY with EXACTLY the most similar sentence I DONT NEED an introduction telling me that thats the sentence,\
+        # this is inside a script if u give me more than the sentence it will crash"""},
+        {"role": "user", "content": sentence}
+    ],
+    # temperature=0
+    )
+    print(completion.choices[0].message["content"])
+    return completion.choices[0].message["content"]

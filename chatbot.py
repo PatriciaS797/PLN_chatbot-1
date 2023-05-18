@@ -85,7 +85,10 @@ if __name__ == "__main__":
 
     while True:
 
-        ins = ai.speech_to_text()
+        # ins = ai.speech_to_text()
+        ins = input("what do you want?:D\n")
+        ins = parse_sentences(ins)#clasiffy actions with chatgpt api
+        ins = ins.lower()
         if ins == "play music":
             playMusic(settings["musica"])
 
@@ -96,29 +99,34 @@ if __name__ == "__main__":
         elif ins == "what's the weather":
             res="Do you want the complete forecast?"
             ai.text_to_speech(res)
-            ins = ai.speech_to_text()
+            # ins = ai.speech_to_text()
+            ins = input("?\n")
             print(ins)
             if ins == "yes":
-
                 res=getWeather(settings["ciudad"],True)
             else:
                 res=getWeather(settings["ciudad"],False)
                 ai.text_to_speech(res)
-
         elif ins == "joke":
             res=joke()
             ai.text_to_speech(res)
-        elif ins == "I'm bored":
+        elif ins == "i'm bored":
             res=activity()
             ai.text_to_speech(res)
-
-        elif ins == "tell me the news":
+        elif ins == "tell me the news.":
             res=getNews()
             for title in res:
                 ai.text_to_speech(title)
                 time.sleep(6)
         elif ins == "cocktail":
             res=cocktail()
+            ai.text_to_speech(res)
+        elif ins == "i want to play chess":
+            playChess()
+        elif ins == "open visual studio":
+            code()
+        elif ins == "classify sentiments":
+            res = sentiment_classifier(input("tell me what do you want to classify\n"))
             ai.text_to_speech(res)
         else:
             pass
