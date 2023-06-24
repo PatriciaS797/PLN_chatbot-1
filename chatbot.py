@@ -18,7 +18,7 @@
 # sudo apt-get install mpg123
 import numpy as np
 import transformers
-
+import time
 import speech_recognition as sr
 
 from gtts import gTTS
@@ -51,7 +51,7 @@ class ChatBot():
         # macbook->afplay | windows->start
         os.system("start res.mp3")
         # print(current_dir+"\\res.mp3")
-        # winsound.PlaySound(current_dir+"\\res.wav", winsound.SND_FILENAME)
+        winsound.PlaySound(current_dir+"\\res.wav", winsound.SND_FILENAME)
         # os.remove("res.mp3")
 
     @staticmethod
@@ -77,22 +77,67 @@ if __name__ == "__main__":
     settings = loadConfig()
     ai = ChatBot(name="maya")
     pipe = pipeline(model="facebook/opt-1.3b")
-
+    output = pipe("Hello")
     res = "Hello I am Maya the AI, what can I do for you?"
     ai.text_to_speech(output[0]["generated_text"])
 
-    # nlp(transformers.Conversation(input_text),pad_token_id=50256)
+   # nlp(transformers.Conversation(input_text),pad_token_id=50256)
 
     while True:
 
-        ins = ai.speech_to_text()
+        # ins = ai.speech_to_text()
+        ins = input("what do you want?:D\n")
+        ins = parse_sentences(ins)#clasiffy actions with chatgpt api
+        ins = ins.lower()
         if ins == "play music":
             playMusic(settings["musica"])
+
         elif ins == "what's the time":
             res = ai.action_time()
             ai.text_to_speech(res)
-        elif ins == "tell a joke":
-            output = pipe(ins, do_sample=True)
-            ai.text_to_speech(output[0]['generated_text'])
+
+        elif ins == "what's the weather":   
+            res=getWeather(settings["ciudad"])
+            ai.text_to_speech(res)
+
+        elif ins == "joke":
+            res=joke()
+            ai.text_to_speech(res[0]['joke'])
+
+        elif ins == "i'm bored":
+            res=activity()
+            ai.text_to_speech(res["item"])
+
+        elif ins == "tell me the news":
+            res=getNews()
+            for title in res:
+                ai.text_to_speech(title)
+                time.sleep(6)
+
+        elif ins == "cocktail":
+            res=cocktail()
+            ai.text_to_speech(res)
+
+        elif ins == "hungry":
+            res=food()
+            ai.text_to_speech(res)
+
+        elif ins == "i want to play chess":
+            playChess()
+
+        elif ins == "open visual studio":
+            code()
+
+        elif ins == "classify sentiments":
+            res = sentiment_classifier(input("tell me what do you want to classify\n"))
+            ai.text_to_speech(res)
+
+        elif ins == "summarize":
+            res = summarize(input("tell me what do you want to summarize\n"))
+            ai.text_to_speech(res)
+
+        elif ins == "tell me poem":
+            res = ''.join(poem())
+            ai.text_to_speech(res)
         else:
             pass
